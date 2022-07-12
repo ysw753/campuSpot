@@ -9,6 +9,8 @@
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
     <title>Login</title>
     <style>
         .loginForm {
@@ -32,35 +34,54 @@
 </head>
 <body>
 <div class="loginForm">
-    <h1> campuSot</h1>
+    <h1> campuSpot</h1>
     <div class="input-group mb-3">
         <span class="input-group-text" id="basic-addon1">E-Mail</span>
-        <input type="text" class="form-control" placeholder="Username" aria-label="Username"
+        <input id="email" type="text" class="form-control" placeholder="Username" aria-label="Username"
                aria-describedby="basic-addon1">
     </div>
     <div class="input-group mb-3">
         <span class="input-group-text" id="basic-addon2">PASSWORD</span>
-        <input type="text" class="form-control" placeholder="Username" aria-label="Username"
+        <input id="password" type="password" class="form-control" placeholder="Username" aria-label="Username"
                aria-describedby="basic-addon1">
     </div>
     <div class="home-btn-box">
-        <button type="button" class="btn btn-light" id="btn-login" onclick="Login()">Login</button>
+        <button type="button" class="btn btn-light" id="btn-login" onclick="login()">Login</button>
         <button type="button" class="btn btn-light" id="btn-signup" onclick="goSignUp()">Sign Up</button>
     </div>
 
 
 </div>
 <script>
-    $(function goSignUp(){
-          $('#btn-signup').click(function (){
-              location.href='sign.html'
-          })
+    $(function goSignUp() {
+        $('#btn-signup').click(function () {
+            window.location.href = '/sign'
+        })
     })
-    $(function Login(){
-        $('#btn-login').click(function (){
-              location.href='accessLogin.html'
-          })
-    })
+
+    function login() {
+        $.ajax({
+            type: "POST",
+            url: "/api/login",
+            data: {email_give: $('#email').val(), pw_give: $('#password').val()},
+            success: function (response) {
+                if (response['result'] == 'success') {
+                    // 로그인이 정상적으로 되면, 토큰을 받아옵니다.
+                    // 이 토큰을 mytoken이라는 키 값으로 쿠키에 저장합니다.
+                    console.log('토큰받기성공' ,response['token'] )
+                    $.cookie('mytoken', response['token']);
+
+                    alert('로그인 완료!')
+                    window.location.href = '/'
+                    console.log('good')
+                } else {
+                    // 로그인이 안되면 에러메시지를 띄웁니다.
+                    alert(response['msg'])
+                }
+            }
+        })
+    }
+
 </script>
 </body>
 </html>

@@ -51,7 +51,7 @@
     </div>
     <div class="input-group mb-3">
         <span class="input-group-text" id="basic-addon1">이메일</span>
-        <input type="text" class="form-control" placeholder="Username" aria-label="Username"
+        <input id="email" type="text" class="form-control" placeholder="Username" aria-label="Username"
                aria-describedby="basic-addon1">
         <button type="button" class="btn btn-danger btn-auth">인증</button>
 
@@ -59,27 +59,27 @@
 
     <div class="input-group mb-3">
         <span class="input-group-text" id="basic-addon2">비밀번호</span>
-        <input type="text" class="form-control" placeholder="Username" aria-label="Username"
+        <input id="password" type="password" class="form-control" placeholder="Username" aria-label="Username"
                aria-describedby="basic-addon1">
     </div>
     <div class="input-group mb-3">
         <span class="input-group-text" id="basic-addon3">비밀번호 확인</span>
-        <input type="text" class="form-control" placeholder="Username" aria-label="Username"
+        <input id="passwordCheck" type="password" class="form-control" placeholder="Username" aria-label="Username"
                aria-describedby="basic-addon1">
     </div>
     <div class="input-group mb-3">
         <span class="input-group-text" id="basic-addon4">닉네임</span>
-        <input type="text" class="form-control" placeholder="Username" aria-label="Username"
+        <input id="nickname" type="text" class="form-control" placeholder="Username" aria-label="Username"
                aria-describedby="basic-addon1">
     </div>
     <div class="input-group mb-3">
         <span class="input-group-text" id="basic-addon5">생년월일</span>
-        <input type="text" class="form-control" placeholder="Username" aria-label="Username"
+        <input id="birth" type="text" class="form-control" placeholder="Username" aria-label="Username"
                aria-describedby="basic-addon1">
     </div>
     <div class="home-btn-box">
         <button type="button" class="btn btn-light" id="btn-home" onclick="goHome()">뒤로가기</button>
-        <button type="button" class="btn btn-light">회원가입</button>
+        <button type="button" class="btn btn-light" onclick="sign()">회원가입</button>
     </div>
 </div>
 <script>
@@ -91,7 +91,7 @@
     });
     $(function goHome() {
         $('#btn-home').click(function () {
-            location.href = 'login.html'
+            window.location.href = '/login'
         })
     })
     $(function NomalUser() {
@@ -105,6 +105,29 @@
         })
     })
 
+    // 간단한 회원가입 함수입니다.
+    // 아이디, 비밀번호, 닉네임을 받아 DB에 저장합니다.
+    function sign() {
+        $.ajax({
+            type: "POST",
+            url: "/api/register",
+            data: {
+                email_give: $('#email').val(),
+                pw_give: $('#password').val(),
+                pwCheck_give: $('#passwordCheck').val(),
+                nickname_give: $('#nickname').val(),
+                birth_give: $('#birth').val()
+            },
+            success: function (response) {
+                if (response['result'] == 'success') {
+                    alert('회원가입이 완료되었습니다.')
+                    window.location.href = '/login'
+                } else {
+                    alert(response['msg'])
+                }
+            }
+        })
+    }
 </script>
 </body>
 </html>
