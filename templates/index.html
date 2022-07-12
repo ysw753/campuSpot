@@ -79,7 +79,7 @@
                 <li><a class="dropdown-item" href="#">오래된순</a></li>
             </ul>
         </div>
-        <button type="button" class="btn btn-dark btn_contents_right">글작성</button>
+        <button type="button" class="btn btn-dark btn_contents_right" id="btn_create" onclick="createPost()" >글작성</button>
     </div>
     <div class="card">
         <div class="card mb-3" style="max-width: 540px;">
@@ -141,6 +141,15 @@
               console.log((e))
           })
     })
+      function createPost(){
+          window.location.href = '/createPost'
+      }
+
+      // $('#btn_create').on('click', function () {
+      //     createPost(e)
+      // });
+
+
 </script>
 </body>
 </html>
