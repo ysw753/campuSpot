@@ -75,8 +75,8 @@ def savePost():
     tag_receive = request.form['tag_give']
     campus_receive = request.form['campus_give']
     body_receive = request.form['body_give']
-
-    doc = {"title": title_receive, "email": email_receive,"tag": tag_receive,"campus": campus_receive,"body": body_receive}
+    photo_receive= request.form['photo_give']
+    doc = {"title": title_receive, "email": email_receive,"tag": tag_receive,"campus": campus_receive,"body": body_receive ,"photo":photo_receive}
     db.write.insert_one(doc)
     return jsonify({'result': 'success', 'msg': f' "{title_receive}" saved'})
 
@@ -111,7 +111,7 @@ def api_login():
         # exp에는 만료시간을 넣어줍니다. 만료시간이 지나면, 시크릿키로 토큰을 풀 때 만료되었다고 에러가 납니다.
         payload = {
             'email': email_receive,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=60)
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=360)
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256').decode('utf-8')
 
@@ -129,7 +129,8 @@ def api_login():
 @app.route('/api/nick', methods=['GET'])
 def api_valid():
     token_receive = request.cookies.get('mytoken')
-
+    # print(request.args.get('campusName'))
+    # checkCampus=request.args.get('campusName')
     # try / catch 문?
     # try 아래를 실행했다가, 에러가 있으면 except 구분으로 가란 얘기입니다.
 
@@ -141,8 +142,16 @@ def api_valid():
 
         # payload 안에 id가 들어있습니다. 이 id로 유저정보를 찾습니다.
         # 여기에선 그 예로 닉네임을 보내주겠습니다.
+
+        # if checkCampus:
+        #     userinfo = db.user.find_one({'email': payload['email']}, {'_id': 0})
+        #     allData_list = list(db.write.find({'campus':checkCampus}, {'_id': False}))
+        #     return jsonify({'result': 'success', 'nickname': userinfo['nick'], 'allData': allData_list})
+        #
+        # else:
         userinfo = db.user.find_one({'email': payload['email']}, {'_id': 0})
-        return jsonify({'result': 'success', 'nickname': userinfo['nick']})
+        allData_list = list(db.write.find({},{'_id':False}))
+        return jsonify({'result': 'success', 'nickname': userinfo['nick'],'allData' : allData_list})
     except jwt.ExpiredSignatureError:
         # 위를 실행했는데 만료시간이 지났으면 에러가 납니다.
         return jsonify({'result': 'fail', 'msg': '로그인 시간이 만료되었습니다.'})

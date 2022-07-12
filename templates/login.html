@@ -9,10 +9,18 @@
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
     <title>Login</title>
     <style>
+        body {
+            background-image: url('https://cdn.pixabay.com/photo/2014/04/17/05/16/namdaemun-326138_960_720.jpg');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            height: 100vh;
+        }
+
         .loginForm {
             width: 500px;
             max-width: 50%;
@@ -22,7 +30,9 @@
 
         h1 {
             text-align: center;
+            color: black;
             padding: 50px;
+            font-weight:bold;
 
         }
 
@@ -34,7 +44,7 @@
 </head>
 <body>
 <div class="loginForm">
-    <h1> campuSpot</h1>
+    <h1> CAMPUSPOT</h1>
     <div class="input-group mb-3">
         <span class="input-group-text" id="basic-addon1">E-Mail</span>
         <input id="email" type="text" class="form-control" placeholder="Username" aria-label="Username"
@@ -68,7 +78,7 @@
                 if (response['result'] == 'success') {
                     // 로그인이 정상적으로 되면, 토큰을 받아옵니다.
                     // 이 토큰을 mytoken이라는 키 값으로 쿠키에 저장합니다.
-                    console.log('토큰받기성공' ,response['token'] )
+                    console.log('토큰받기성공', response['token'])
                     $.cookie('mytoken', response['token']);
 
                     alert('로그인 완료!')
