@@ -1,5 +1,6 @@
 import hashlib
-
+import time
+import math
 from pymongo import MongoClient
 import certifi
 from flask import Flask, render_template,request, jsonify,session, redirect, url_for
@@ -70,18 +71,27 @@ def createPost():
 @app.route('/api/savePost', methods=['POST'])
 def savePost():
     # 게시글 속성 저장하기
+    num = time.time()
+    numId=math.trunc(num)
+
     title_receive = request.form['title_give']
     email_receive = request.form['email_give']
     tag_receive = request.form['tag_give']
     campus_receive = request.form['campus_give']
     body_receive = request.form['body_give']
     photo_receive= request.form['photo_give']
-    doc = {"title": title_receive, "email": email_receive,"tag": tag_receive,"campus": campus_receive,"body": body_receive ,"photo":photo_receive}
+    doc = {'numId':numId, "title": title_receive, "email": email_receive,"tag": tag_receive,"campus": campus_receive,"body": body_receive ,"photo":photo_receive}
     db.write.insert_one(doc)
+
     return jsonify({'result': 'success', 'msg': f' "{title_receive}" saved'})
 
 
-
+@app.route('/api/deletePost', methods=['POST'])
+def delete_word():
+    # 단어 삭제하기
+    num_receive = request.form['numId_give']
+    db.write.delete_one({"numId":int(num_receive)})
+    return jsonify({'result': 'success', 'msg': f'word "{num_receive}" deleted'})
 
 
 
@@ -111,7 +121,7 @@ def api_login():
         # exp에는 만료시간을 넣어줍니다. 만료시간이 지나면, 시크릿키로 토큰을 풀 때 만료되었다고 에러가 납니다.
         payload = {
             'email': email_receive,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=360)
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=60)
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256').decode('utf-8')
 
@@ -150,8 +160,8 @@ def api_valid():
         #
         # else:
         userinfo = db.user.find_one({'email': payload['email']}, {'_id': 0})
-        allData_list = list(db.write.find({},{'_id':False}))
-        return jsonify({'result': 'success', 'nickname': userinfo['nick'],'allData' : allData_list})
+        allData_list = list(db.write.find({}, {'_id': False}))
+        return jsonify({'result': 'success', 'nickname': userinfo['nick'], 'allData': allData_list})
     except jwt.ExpiredSignatureError:
         # 위를 실행했는데 만료시간이 지났으면 에러가 납니다.
         return jsonify({'result': 'fail', 'msg': '로그인 시간이 만료되었습니다.'})
@@ -160,7 +170,7 @@ def api_valid():
 
 
 if __name__ == '__main__':
-   app.run('0.0.0.0',port=5000,debug=True)
+    app.run('0.0.0.0',port=5000,debug=True)
 
 
 

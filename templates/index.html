@@ -10,6 +10,7 @@
             crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="/path/to/jquery.cookie.js"></script>
+
     <style>
         body {
             background-image: url('https://cdn.pixabay.com/photo/2020/11/19/08/03/college-5757815_960_720.jpg');
@@ -157,7 +158,20 @@
 
         show_all(campusName)
     }
-
+    function deletefnc(e){
+        let numId = e
+         $.ajax({
+            type: "POST",
+            url: `/api/deletePost`,
+            data: {
+                numId_give: numId,
+            },
+            success: function (response) {
+                alert(response["msg"])
+                window.location.href = "/"
+            }
+        });
+    }
     function show_all(campusName) {
         $('#card_wrap').empty()
         $.ajax({
@@ -165,10 +179,11 @@
                 url: '/api/nick',
                 data: {},
                 success: function (response) {
-                    let userEmail = response['email']
-                    console.log(userEmail)
+                    let userEmail = response['nickname']
+                    console.log(response)
 
                     let allData = response['allData']
+
                     if (campusName == '전체보기' || campusName == null) {
                         for (let i = 0; i < allData.length; i++) {
 
@@ -178,17 +193,20 @@
                             let tag = allData[i]['tag']
                             let photo = allData[i]['photo']
                             let campus = '#' + allData[i]['campus']
-
-
-
-                            console.log(photo)
-                            let temp_html = `<div class="card cardbox" style="width: 25rem;">
+                            let numId = allData[i]['numId']
+                            let html_btn=``
+                             if(userEmail==email){
+                                 html_btn=`<button onclick="deletefnc('${numId}')">삭제</button>`
+                             }
+                            let temp_html = `<div class="card cardbox" style="width: 25rem;"  >
                                                 <img src='${photo}' class="card-img-top" onerror="this.onerror=null; this.src='https://cdn.pixabay.com/photo/2017/09/30/01/16/kitten-2801007_960_720.jpg';">
                                                 <div class="card-body">
-                                                    <h5 class="card-title">${title}</h5>
+                                                    <h5 class="card-title" >${title}</h5>
                                                     <p class="card-text">${body}</p>
                                                     <p class="card-text">#${campus} ${tag}</p>
+                                                    ${html_btn}
                                                 </div>
+
                                             </div>`
                             $('#card_wrap').append(temp_html)
                         }
@@ -202,15 +220,20 @@
                                 let tag = allData[i]['tag']
                                 let photo = allData[i]['photo']
                                 let campus = '#' + allData[i]['campus']
-                                console.log(photo)
+                                let numId = allData[i]['numId']
+                                let html_btn=``
+                                 if(userEmail==email){
+                                     html_btn=`<button onclick="deletefnc('${numId}')">삭제</button>`
+                                 }
                                 let temp_html = `
-                                            <div class="card cardbox" style="width: 25rem;">
+                                            <div class="card cardbox" style="width: 25rem;"  >
                                                 <img src='${photo}' class="card-img-top" onerror="this.onerror=null; this.src='https://cdn.pixabay.com/photo/2017/09/30/01/16/kitten-2801007_960_720.jpg';">
                                                 <div class="card-body">
-                                                    <h5 class="card-title">${title}</h5>
+                                                    <h5 class="card-title" >${title}</h5>
                                                     <p class="card-text">${body}</p>
                                                     <p class="card-text">#${campus} ${tag}</p>
-                                                </div>
+                                                    ${html_btn}
+                                                    </div>
                                             </div>`
                                 $('#card_wrap').append(temp_html)
                             }
